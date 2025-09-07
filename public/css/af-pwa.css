@@ -1,0 +1,274 @@
+/**
+ * AF-PWA Styles
+ * Styles for PWA components and notifications
+ */
+
+/* Install Button */
+.af-pwa-install-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    display: none;
+}
+
+.af-pwa-install-button:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+}
+
+.af-pwa-install-button:active {
+    transform: translateY(0);
+}
+
+/* Network Status Indicator */
+.af-pwa-network-indicator {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    z-index: 1001;
+    transition: all 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.af-pwa-network-indicator.online {
+    background: rgba(40, 167, 69, 0.9);
+}
+
+.af-pwa-network-indicator.offline {
+    background: rgba(220, 53, 69, 0.9);
+    opacity: 1 !important;
+}
+
+/* Notifications */
+.af-pwa-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    max-width: 400px;
+    z-index: 1002;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    animation: af-pwa-slide-down 0.3s ease;
+}
+
+.af-pwa-notification-info {
+    background: #17a2b8;
+}
+
+.af-pwa-notification-success {
+    background: #28a745;
+}
+
+.af-pwa-notification-warning {
+    background: #ffc107;
+    color: #212529;
+}
+
+.af-pwa-notification-error {
+    background: #dc3545;
+}
+
+.af-pwa-notification button {
+    background: rgba(255, 255, 255, 0.2);
+    color: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.af-pwa-notification button:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Offline Page Styles */
+.af-pwa-offline-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    text-align: center;
+    background: #f8f9fa;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.af-pwa-offline-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    opacity: 0.6;
+}
+
+.af-pwa-offline-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.af-pwa-offline-message {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 30px;
+    max-width: 400px;
+    line-height: 1.5;
+}
+
+.af-pwa-offline-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.af-pwa-offline-button:hover {
+    background: #0056b3;
+}
+
+/* Loading Spinner */
+.af-pwa-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: af-pwa-spin 0.8s linear infinite;
+}
+
+/* Animations */
+@keyframes af-pwa-slide-down {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes af-pwa-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .af-pwa-install-button {
+        bottom: 15px;
+        right: 15px;
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+    
+    .af-pwa-network-indicator {
+        top: 15px;
+        right: 15px;
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+    
+    .af-pwa-notification {
+        top: 15px;
+        left: 15px;
+        right: 15px;
+        transform: none;
+        max-width: none;
+    }
+    
+    .af-pwa-offline-title {
+        font-size: 20px;
+    }
+    
+    .af-pwa-offline-message {
+        font-size: 14px;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .af-pwa-offline-page {
+        background: #1a1a1a;
+        color: #e0e0e0;
+    }
+    
+    .af-pwa-offline-title {
+        color: #ffffff;
+    }
+    
+    .af-pwa-offline-message {
+        color: #b0b0b0;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .af-pwa-install-button {
+        border: 2px solid #fff;
+    }
+    
+    .af-pwa-notification {
+        border: 2px solid rgba(255, 255, 255, 0.5);
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .af-pwa-install-button,
+    .af-pwa-network-indicator,
+    .af-pwa-notification {
+        transition: none;
+    }
+    
+    .af-pwa-notification {
+        animation: none;
+    }
+    
+    .af-pwa-spinner {
+        animation: none;
+        border-top-color: rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* Print Styles */
+@media print {
+    .af-pwa-install-button,
+    .af-pwa-network-indicator,
+    .af-pwa-notification {
+        display: none !important;
+    }
+}
