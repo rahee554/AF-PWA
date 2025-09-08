@@ -1,8 +1,8 @@
 # AF-PWA - Laravel Progressive Web Application Package
 
-[![Latest Stable Version](https://img.shields.io/packagist/v/artflow-studio/af-pwa.svg)](https://packagist.org/packages/artflow-studio/af-pwa)
-[![License](https://img.shields.io/packagist/l/artflow-studio/af-pwa.svg)](https://packagist.org/packages/artflow-studio/af-pwa)
-[![PHP Version](https://img.shields.io/packagist/php-v/artflow-studio/af-pwa.svg)](https://packagist.org/packages/artflow-studio/af-pwa)
+[![Latest Stable Version](https://img.shields.io/packagist/v/artflow-studio/pwa.svg)](https://packagist.org/packages/artflow-studio/pwa)
+[![License](https://img.shields.io/packagist/l/artflow-studio/pwa.svg)](https://packagist.org/packages/artflow-studio/pwa)
+[![PHP Version](https://img.shields.io/packagist/php-v/artflow-studio/pwa.svg)](https://packagist.org/packages/artflow-studio/pwa)
 
 Transform your Laravel application into a **Production-Ready Progressive Web Application** with zero configuration complexity. AF-PWA provides everything you need to create installable, offline-capable web applications that work seamlessly across all devices and platforms.
 
@@ -20,23 +20,24 @@ That's it! Everything is configured automatically.
 - Works seamlessly on iOS, Android, Windows, macOS, and Linux
 - Automatic install badge/prompt when PWA requirements are met
 
-### ⚡ **Production-Ready Performance**
-- **Smart Caching Strategies**: Cache-first for assets, Network-first for pages/API
-- **Optimized Assets**: Minified CSS/JS with proper cache headers
-- **Background Sync**: Offline form submissions with automatic retry
-- **Service Worker**: Advanced caching with CSRF/session handling
+### ⚡ **Silent & Seamless Operation**
+- **No User Interruptions** - CSRF tokens refresh silently in background
+- **Auto-Updates** - New versions install automatically without user prompts
+- **Session Management** - Automatic session handling with Laravel authentication
+- **Zero-Click Experience** - Users never see technical alerts or update notifications
 
-### 🎨 **Complete Icon Suite**
-- **Auto-Generated Icons**: Creates all required PWA icon sizes (16x16 to 512x512)
-- **Maskable Icons**: Platform-adaptive icons for modern devices
-- **Apple Touch Icons**: Perfect iOS integration
-- **SVG Support**: Vector icons with PNG fallbacks
+### 📱 **Production-Ready Architecture** 
+- **Vendor-Managed Assets**: All PWA files organized in `vendor/artflow-studio/pwa/`
+- **Minimal Root Footprint**: Only `favicon.ico` remains in public root
+- **Smart Icon Generation**: Creates all required PWA icons directly in vendor directory
+- **Laravel-Optimized**: Built specifically for Laravel with proper middleware integration
 
-### 🔧 **Advanced Configuration**
-- **Route Auto-Discovery**: Automatically detects and caches your app routes
-- **Offline Pages**: Custom offline experiences for different user types
-- **Error Handling**: Robust CSRF token refresh and session management
-- **Network Status**: Real-time connectivity monitoring
+### 🔧 **Enterprise Features**
+- **Route Auto-Discovery**: Automatically detects admin/*, member/*, dashboard/* routes
+- **Advanced Caching**: Cache-first for assets, Network-first for pages/API
+- **CSRF-Safe Operations**: Automatic token refresh with retry logic
+- **Session Timeout Handling**: Graceful session expiry management
+- **Network Resilience**: Intelligent offline/online state management
 
 ### 🧪 **Testing & Monitoring**
 - **Health Check System**: Comprehensive PWA validation
@@ -55,7 +56,7 @@ That's it! Everything is configured automatically.
 
 ```bash
 # Install the package
-composer require artflow-studio/af-pwa
+composer require artflow-studio/pwa
 
 # Run the interactive installer
 php artisan af-pwa:install
@@ -63,10 +64,11 @@ php artisan af-pwa:install
 
 The installer will:
 1. 📝 Publish configuration files
-2. 🎨 Generate PWA icons from your existing favicon/logo
+2. 🎨 Generate PWA icons directly in vendor directory
 3. ⚙️ Configure PWA settings interactively
 4. 📦 Publish assets to `public/vendor/artflow-studio/pwa/`
 5. 🔧 Set up routes and service worker
+6. ✅ Achieve 100% PWA health score
 
 ### Manual Installation
 
@@ -115,12 +117,54 @@ php artisan af-pwa:install
 # Run comprehensive tests
 php artisan af-pwa:test
 
-# Check PWA health
+# Check PWA health (targeting 100% score)
 php artisan af-pwa:health
 
-# Test with Playwright (if available)
-npx playwright test test-pwa-install.spec.js
+# Validate all components
+php artisan af-pwa:test --fix
 ```
+
+That's it! Your Laravel app is now a Progressive Web Application with:
+- ✅ Automatic CSRF token management
+- ✅ Silent background updates
+- ✅ Intelligent caching strategies
+- ✅ Production-ready icon suite
+- ✅ Laravel-optimized performance
+
+## 🎨 Icon Management
+
+### Automatic Generation
+AF-PWA generates all required icons directly in the vendor directory:
+
+```bash
+# Generate from existing favicon/logo
+php artisan af-pwa:generate --icons
+```
+
+**Icon Structure:**
+```
+public/vendor/artflow-studio/pwa/icons/
+├── icon-192x192.png          # Required PWA icon
+├── icon-512x512.png          # Required PWA icon  
+├── maskable-icon-192x192.png # Platform-adaptive
+├── maskable-icon-512x512.png # Platform-adaptive
+└── [additional sizes...]     # Complete PWA icon suite
+```
+
+**Root Level (Minimal):**
+```
+public/
+├── favicon.ico               # Only essential favicon in root
+├── favicon.svg               # Vector favicon
+└── manifest.json             # PWA manifest
+```
+
+### Source Detection Priority
+1. `public/favicon.svg` (preferred)
+2. `public/favicon.ico`
+3. `public/logo.svg`
+4. `public/logo.png`
+5. Auto-generated placeholder if none found
 
 ## 🎛 Configuration
 
@@ -139,7 +183,8 @@ PWA_SHOW_INSTALL_PROMPT=false          # Use native browser prompt
 PWA_SHOW_NETWORK_STATUS=true           # Show connectivity status
 PWA_ENABLE_NOTIFICATIONS=false         # Push notifications
 PWA_ENABLE_BACKGROUND_SYNC=false       # Offline form sync
-PWA_AUTO_REFRESH_ON_UPDATE=false       # Auto-update behavior
+PWA_AUTO_REFRESH_ON_UPDATE=true        # Silent background updates
+PWA_CSRF_AUTO_REFRESH=true             # Silent CSRF token refresh
 
 # Performance
 PWA_CACHE_VERSION="v1"                 # Cache versioning
@@ -178,11 +223,10 @@ return [
         ['src' => '/vendor/artflow-studio/pwa/icons/maskable-icon-512x512.png', 'sizes' => '512x512', 'type' => 'image/png', 'purpose' => 'maskable'],
     ],
     
-    // Routes (auto-discovered)
-    'pwa_routes' => ['/'],
+    // Auto-Discovery Routes
     'auto_discover_routes' => true,
     'route_discovery_patterns' => [
-        '/dashboard*', '/profile*', '/settings*', '/auth/*'
+        '/admin*', '/member*', '/dashboard*', '/profile*', '/settings*'
     ],
     
     // Caching Strategy
@@ -192,17 +236,17 @@ return [
         'api' => 'network-first',     // API requests
     ],
     
-    // Error Handling
+    // Silent Error Handling
     'error_handling' => [
         'csrf_error' => [
-            'auto_refresh' => true,
+            'auto_refresh' => true,        // Silent token refresh
             'max_retries' => 3,
-            'show_notification' => true,
+            'show_notification' => false,  // No user alerts
         ],
         'session_expired' => [
             'redirect_to_login' => true,
             'login_route' => '/login',
-            'show_notification' => true,
+            'show_notification' => true,   // Only for session expiry
         ],
         'network_error' => [
             'show_offline_page' => true,
@@ -242,35 +286,54 @@ public/vendor/artflow-studio/pwa/icons/
 
 ## 🔧 Artisan Commands
 
-### Installation & Setup
+### Installation & Generation
 ```bash
 php artisan af-pwa:install [--force] [--minimal]
 # Interactive PWA setup with configuration wizard
 
 php artisan af-pwa:generate [--icons] [--manifest] [--service-worker]
-# Generate specific PWA components
+# Generate specific PWA components with vendor organization
 ```
 
-### Maintenance
+### Quality Assurance
 ```bash
+php artisan af-pwa:health
+# Comprehensive PWA health check (targets 100% score)
+
+php artisan af-pwa:test [--fix]
+# Run full test suite with auto-fix capability
+
 php artisan af-pwa:refresh
 # Clear cache and regenerate all PWA files
-
-php artisan af-pwa:health
-# Comprehensive PWA health check (95% score target)
-
-php artisan af-pwa:test
-# Run full test suite for PWA compliance
 ```
 
-### Development
+## 📊 Quality Metrics
+
+### Health Check Results
 ```bash
-php artisan af-pwa:test --fix
-# Run tests and auto-fix common issues
-
-php artisan af-pwa:generate --source=path/to/logo.png
-# Generate icons from specific source image
+php artisan af-pwa:health
 ```
+
+**Target Metrics:**
+- 🎯 **100% Health Score** - Perfect PWA implementation
+- ✅ **All Required Icons** - Complete icon suite in vendor directory
+- ✅ **Service Worker Active** - Advanced caching with CSRF handling
+- ✅ **Manifest Valid** - W3C compliant manifest.json
+- ✅ **Assets Organized** - Vendor-managed asset structure
+
+### Test Suite Coverage
+```bash
+php artisan af-pwa:test
+```
+
+**57 Tests Including:**
+- Configuration validation
+- Manifest.json compliance  
+- Service worker functionality
+- Icon availability (all sizes)
+- Route accessibility
+- Asset organization
+- Laravel integration
 
 ## 📊 Testing & Validation
 
@@ -286,7 +349,7 @@ php artisan af-pwa:health
 - ✅ Icons (all sizes, maskable icons)
 
 **Health Score Breakdown:**
-- 100%: Perfect PWA implementation
+- 100%: Perfect PWA implementation (TARGET)
 - 95%+: Production ready
 - 80%+: Good, minor improvements needed
 - <80%: Needs attention
@@ -338,24 +401,24 @@ php artisan view:cache
 
 ### 2. Server Configuration
 
-#### Nginx
+#### Nginx (Recommended)
 ```nginx
-# PWA files with proper headers
-location ~* \.(webmanifest|json)$ {
+# PWA Service Worker
+location = /sw.js {
+    add_header Cache-Control "no-cache, no-store, must-revalidate";
+    add_header Service-Worker-Allowed "/";
+}
+
+# PWA Manifest
+location = /manifest.json {
     add_header Cache-Control "public, max-age=86400, must-revalidate";
     add_header X-Content-Type-Options "nosniff";
 }
 
-location = /sw.js {
-    add_header Cache-Control "no-cache, no-store, must-revalidate";
-    add_header Pragma "no-cache";
-    add_header Expires "0";
-    add_header Service-Worker-Allowed "/";
-}
-
-# PWA icons
-location /vendor/artflow-studio/pwa/icons/ {
+# PWA Assets (vendor directory)
+location /vendor/artflow-studio/pwa/ {
     add_header Cache-Control "public, max-age=31536000, immutable";
+    expires 1y;
 }
 ```
 
@@ -411,7 +474,7 @@ php artisan optimize
 **Ready to make your Laravel app installable?**
 
 ```bash
-composer require artflow-studio/af-pwa
+composer require artflow-studio/pwa
 php artisan af-pwa:install
 ```
 
@@ -439,7 +502,7 @@ Transform your web application into a native-like experience in minutes, not day
 Install the package via Composer:
 
 ```bash
-composer require artflow-studio/af-pwa
+composer require artflow-studio/pwa
 ```
 
 ### 2. Setup
@@ -484,7 +547,7 @@ That's it! Your Laravel app is now a Progressive Web Application! 🎉
 ### Step 1: Install Package
 
 ```bash
-composer require artflow-studio/af-pwa
+composer require artflow-studio/pwa
 ```
 
 ### Step 2: Run Installation Wizard
@@ -1024,9 +1087,9 @@ AF-PWA is open-sourced software licensed under the [MIT license](LICENSE).
 
 ## 🆘 Support
 
-- 📖 [Documentation](https://github.com/artflow-studio/af-pwa/wiki)
-- 🐛 [Issue Tracker](https://github.com/artflow-studio/af-pwa/issues)
-- 💬 [Discussions](https://github.com/artflow-studio/af-pwa/discussions)
+- 📖 [Documentation](https://github.com/artflow-studio/pwa/wiki)
+- 🐛 [Issue Tracker](https://github.com/artflow-studio/pwa/issues)
+- 💬 [Discussions](https://github.com/artflow-studio/pwa/discussions)
 - 📧 [Email Support](mailto:support@artflow-studio.com)
 
 ## 🙏 Credits

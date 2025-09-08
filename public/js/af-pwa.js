@@ -86,8 +86,8 @@ class AfPwa {
         this.log('Received notification:', data);
         
         switch (data.type) {
-            case 'csrf_error':
-                this.handleCSRFError(data);
+            case 'csrf_token_updated':
+                this.updateCSRFToken(data.token);
                 break;
             case 'session_expired':
                 this.handleSessionExpired(data);
@@ -99,18 +99,22 @@ class AfPwa {
     }
 
     /**
-     * Handle CSRF errors
+     * Update CSRF token silently
      */
-    handleCSRFError(data) {
-        if (this.config.show_notifications) {
-            this.showNotification(data.message || 'Session expired. Refreshing...', 'warning');
+    updateCSRFToken(newToken) {
+        // Update meta tag
+        const metaTag = document.querySelector('meta[name="csrf-token"]');
+        if (metaTag) {
+            metaTag.setAttribute('content', newToken);
         }
         
-        if (data.auto_refresh) {
-            this.refreshCSRFToken();
-        }
+        // Update all forms
+        document.querySelectorAll('input[name="_token"]').forEach(input => {
+            input.value = newToken;
+        });
         
-        this.dispatchEvent('af-pwa:csrf-error', data);
+        this.log('CSRF token updated silently');
+        this.dispatchEvent('af-pwa:csrf-updated', { token: newToken });
     }
 
     /**
@@ -393,11 +397,11 @@ class AfPwa {
     }
 
     /**
-     * Check for service worker updates
+     * Check for service worker updates - auto-update silently
      */
     checkForUpdates(registration) {
         if (registration.waiting) {
-            this.showUpdateAvailable(registration);
+            this.applyUpdateSilently(registration);
             return;
         }
 
@@ -406,37 +410,31 @@ class AfPwa {
             
             newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    this.showUpdateAvailable(registration);
+                    this.applyUpdateSilently(registration);
                 }
             });
         });
     }
 
     /**
-     * Show update available notification
+     * Apply update silently without user notification
      */
-    showUpdateAvailable(registration) {
-        const notification = this.showNotification(
-            'A new version is available! <button onclick="window.afPwa.applyUpdate()">Update</button>',
-            'info',
-            0 // Don't auto-remove
-        );
+    applyUpdateSilently(registration) {
+        this.log('New version available, updating silently...');
         
-        notification.dataset.registration = JSON.stringify(registration);
-        this.dispatchEvent('af-pwa:update-available', { registration });
-    }
-
-    /**
-     * Apply available update
-     */
-    applyUpdate() {
         if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
             navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
             
             navigator.serviceWorker.addEventListener('controllerchange', () => {
-                window.location.reload();
+                this.log('Service worker updated, reloading page...');
+                // Small delay to ensure proper cleanup
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
             });
         }
+        
+        this.dispatchEvent('af-pwa:update-applied-silently', { registration });
     }
 
     /**

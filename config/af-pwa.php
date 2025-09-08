@@ -284,6 +284,32 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Cache Headers
+    |--------------------------------------------------------------------------
+    |
+    | Configure HTTP cache headers for PWA files. These headers control
+    | how browsers and CDNs cache your PWA assets.
+    |
+    */
+    'cache_headers' => [
+        'manifest' => [
+            'Cache-Control' => 'public, max-age=86400, must-revalidate',
+            'X-Content-Type-Options' => 'nosniff',
+        ],
+        'service_worker' => [
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Service-Worker-Allowed' => '/',
+        ],
+        'icons' => [
+            'Cache-Control' => 'public, max-age=31536000, immutable',
+        ],
+        'assets' => [
+            'Cache-Control' => 'public, max-age=31536000, immutable',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Network Timeouts
     |--------------------------------------------------------------------------
     |

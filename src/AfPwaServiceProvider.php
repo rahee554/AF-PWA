@@ -32,11 +32,11 @@ class AfPwaServiceProvider extends ServiceProvider
             __DIR__.'/../config/af-pwa.php' => config_path('af-pwa.php'),
         ], 'af-pwa-config');
 
-        // Publish assets
+        // Publish assets - only icons to vendor directory
         $this->publishes([
             __DIR__.'/../resources/js' => public_path('vendor/artflow-studio/pwa/js'),
-            __DIR__.'/../resources/css' => public_path('vendor/artflow-studio/pwa/css'),
-            __DIR__.'/../public/icons' => public_path('vendor/artflow-studio/pwa/icons'),
+            __DIR__.'/../public/css' => public_path('vendor/artflow-studio/pwa/css'),
+            __DIR__.'/../public/js' => public_path('vendor/artflow-studio/pwa/js'),
         ], 'af-pwa-assets');
 
         // Publish views
@@ -145,6 +145,60 @@ class AfPwaServiceProvider extends ServiceProvider
                     ->header('Vary', 'Accept-Encoding')
                     ->header('X-Content-Type-Options', 'nosniff');
             })->name('af-pwa.offline');
+        });
+
+        // Register vendor asset routes with proper cache headers
+        Route::group([
+            'prefix' => 'vendor/artflow-studio/pwa',
+            'middleware' => config('af-pwa.route_middleware', ['web']),
+        ], function () {
+            // Icons with long-term caching
+            Route::get('/icons/{filename}', function ($filename) {
+                $path = public_path('vendor/artflow-studio/pwa/icons/' . $filename);
+                
+                if (!file_exists($path)) {
+                    abort(404);
+                }
+                
+                $mimeType = mime_content_type($path);
+                $etag = md5_file($path);
+                $lastModified = filemtime($path);
+                
+                return response()->file($path, [
+                    'Content-Type' => $mimeType,
+                    'Cache-Control' => 'public, max-age=31536000, immutable',
+                    'ETag' => $etag,
+                    'Last-Modified' => gmdate('D, d M Y H:i:s', $lastModified) . ' GMT',
+                ]);
+            })->name('af-pwa.icons');
+
+            // CSS/JS assets with long-term caching  
+            Route::get('/{type}/{filename}', function ($type, $filename) {
+                if (!in_array($type, ['css', 'js'])) {
+                    abort(404);
+                }
+                
+                $path = public_path("vendor/artflow-studio/pwa/{$type}/" . $filename);
+                
+                if (!file_exists($path)) {
+                    abort(404);
+                }
+                
+                $mimeTypes = [
+                    'css' => 'text/css',
+                    'js' => 'application/javascript',
+                ];
+                
+                $etag = md5_file($path);
+                $lastModified = filemtime($path);
+                
+                return response()->file($path, [
+                    'Content-Type' => $mimeTypes[$type],
+                    'Cache-Control' => 'public, max-age=31536000, immutable',
+                    'ETag' => $etag,
+                    'Last-Modified' => gmdate('D, d M Y H:i:s', $lastModified) . ' GMT',
+                ]);
+            })->name('af-pwa.assets');
         });
 
         // Register additional routes under prefix for admin/management

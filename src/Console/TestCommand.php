@@ -497,7 +497,7 @@ class TestCommand extends Command
      */
     protected function testAssets(): void
     {
-        $assetDir = public_path('vendor/af-pwa');
+        $assetDir = public_path('vendor/artflow-studio/pwa');
         
         if (!File::isDirectory($assetDir)) {
             $this->addError('AF-PWA assets not published', 'php artisan vendor:publish --tag=af-pwa-assets');

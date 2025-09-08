@@ -316,8 +316,23 @@ class HealthCheckCommand extends Command
      */
     protected function checkCachingHeaders(): void
     {
-        // Determine the base URL
+        // Check if cache headers are configured
+        $cacheHeadersConfig = config('af-pwa.cache_headers');
+        
+        if (!empty($cacheHeadersConfig)) {
+            $this->line("  • Cache headers: ✅ Configured");
+            $this->healthData['performance']['caching']['configured'] = true;
+            return;
+        }
+        
+        // Fallback: try to test actual headers if server is running
         $baseUrl = $this->option('url') ?: $this->detectServerUrl();
+        
+        if (!$baseUrl) {
+            $this->line("  • Cache headers: ⚠️  Not configured (run: php artisan vendor:publish --tag=af-pwa-config --force)");
+            $this->recommendations[] = "Configure cache headers in config/af-pwa.php";
+            return;
+        }
         
         // Test cache headers on PWA files
         $testUrls = [

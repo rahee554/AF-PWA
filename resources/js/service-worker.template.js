@@ -315,24 +315,15 @@ async function handlePostRequest(request) {
 }
 
 /**
- * Handle CSRF token errors
+ * Handle CSRF token errors - silent auto-refresh
  */
 async function handleCSRFError(originalRequest, response) {
     const errorConfig = CONFIG.error_handling?.csrf_error || {};
     
-    console.log('[SW] CSRF error detected, attempting token refresh...');
+    console.log('[SW] CSRF error detected, silently refreshing token...');
     
-    // Notify client about CSRF error
-    if (errorConfig.show_notification) {
-        notifyClients({
-            type: 'csrf_error',
-            message: errorConfig.message || 'Session expired. Refreshing...',
-            auto_refresh: errorConfig.auto_refresh
-        });
-    }
-    
-    // If auto-refresh is enabled, try to get new token
-    if (errorConfig.auto_refresh) {
+    // Auto-refresh enabled by default, no user notification
+    if (errorConfig.auto_refresh !== false) {
         try {
             // Try to refresh CSRF token by fetching a page
             const tokenResponse = await fetch('/', { method: 'GET' });
@@ -343,6 +334,13 @@ async function handleCSRFError(originalRequest, response) {
                 
                 if (tokenMatch) {
                     const newToken = tokenMatch[1];
+                    
+                    // Notify client to update CSRF token in DOM
+                    notifyClients({
+                        type: 'csrf_token_updated',
+                        token: newToken,
+                        silent: true
+                    });
                     
                     // Clone the original request with new token
                     const formData = await originalRequest.formData();
@@ -358,11 +356,7 @@ async function handleCSRFError(originalRequest, response) {
                     const retryResponse = await fetch(retryRequest);
                     
                     if (retryResponse.ok) {
-                        console.log('[SW] CSRF token refreshed successfully');
-                        notifyClients({
-                            type: 'csrf_success',
-                            message: 'Session refreshed successfully'
-                        });
+                        console.log('[SW] CSRF token refreshed and request retried successfully');
                         return retryResponse;
                     }
                 }

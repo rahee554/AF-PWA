@@ -327,35 +327,26 @@ class InstallCommand extends Command
      */
     protected function createPlaceholderIcons(): void
     {
-        // Create icons in vendor directory for centralized management
-        $iconDir = base_path('vendor/artflow-studio/af-pwa/public/icons');
-        $publicIconDir = public_path('vendor/artflow-studio/pwa/icons');
+        // Create icons directly in vendor publish directory
+        $iconDir = public_path('vendor/artflow-studio/pwa/icons');
         
         if (!File::isDirectory($iconDir)) {
             File::makeDirectory($iconDir, 0755, true);
-        }
-        
-        if (!File::isDirectory($publicIconDir)) {
-            File::makeDirectory($publicIconDir, 0755, true);
         }
 
         $sizes = [16, 32, 72, 96, 128, 144, 152, 192, 384, 512];
         
         foreach ($sizes as $size) {
             $iconPath = $iconDir . "/icon-{$size}x{$size}.png";
-            $publicIconPath = $publicIconDir . "/icon-{$size}x{$size}.png";
             $this->createPlaceholderIcon($iconPath, $size);
-            // Copy to public directory as well
-            File::copy($iconPath, $publicIconPath);
         }
 
         // Create maskable icons
         $this->createMaskableIcon($iconDir . "/maskable-icon-192x192.png", 192);
         $this->createMaskableIcon($iconDir . "/maskable-icon-512x512.png", 512);
         
-        // Copy maskable icons to public
-        File::copy($iconDir . "/maskable-icon-192x192.png", $publicIconDir . "/maskable-icon-192x192.png");
-        File::copy($iconDir . "/maskable-icon-512x512.png", $publicIconDir . "/maskable-icon-512x512.png");
+        // Only create favicon.ico in public root
+        $this->createFaviconIco();
     }
 
     /**
@@ -400,6 +391,29 @@ class InstallCommand extends Command
 </svg>";
 
         File::put($path, $svg);
+    }
+
+    /**
+     * Create favicon.ico in public root
+     */
+    protected function createFaviconIco(): void
+    {
+        $faviconPath = public_path('favicon.ico');
+        
+        // Only create if it doesn't exist
+        if (!File::exists($faviconPath)) {
+            // Create a simple SVG favicon
+            $favicon = "<?xml version='1.0' encoding='UTF-8'?>
+<svg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'>
+  <rect width='32' height='32' fill='#007bff' rx='3'/>
+  <text x='50%' y='50%' font-family='Arial, sans-serif' font-size='12' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='middle'>P</text>
+</svg>";
+            
+            File::put(public_path('favicon.svg'), $favicon);
+            
+            // Copy SVG as ICO for compatibility
+            File::copy(public_path('favicon.svg'), $faviconPath);
+        }
     }
 
     /**
