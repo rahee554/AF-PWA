@@ -3,7 +3,6 @@
     "description": "A comprehensive Progressive Web Application package for Laravel with advanced session handling, CSRF protection, dynamic routing, and configurable asset caching",
     "type": "library",
     "license": "MIT",
-    "version": "0.2.0",
     "keywords": [
         "laravel",
         "pwa",
