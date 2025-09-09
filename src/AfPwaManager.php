@@ -156,6 +156,12 @@ class AfPwaManager
             'dir' => $this->config['dir'] ?? 'ltr',
             'categories' => $this->config['categories'] ?? ['business', 'productivity'],
             'prefer_related_applications' => false,
+            // Mobile-specific features for better PWA support
+            'id' => $this->config['id'] ?? url('/'),
+            'display_override' => ['window-controls-overlay', 'standalone'],
+            'edge_side_panel' => [
+                'preferred_width' => 400
+            ],
         ];
 
         // Add icons
@@ -170,9 +176,12 @@ class AfPwaManager
             $manifest['shortcuts'] = $this->config['shortcuts'];
         }
 
-        // Add screenshots
+        // Add screenshots for mobile app stores
         if (isset($this->config['screenshots']) && is_array($this->config['screenshots'])) {
             $manifest['screenshots'] = $this->config['screenshots'];
+        } else {
+            // Add default screenshots to help with mobile installation
+            $manifest['screenshots'] = $this->generateDefaultScreenshots();
         }
 
         return $manifest;
@@ -183,7 +192,12 @@ class AfPwaManager
      */
     public function generateServiceWorker(): string
     {
-        $template = File::get(__DIR__ . '/../resources/js/service-worker.template.js');
+        // Check for custom template first, then use package template
+        $customTemplate = resource_path('views/vendor/af-pwa/js/service-worker.template.js');
+        $packageTemplate = __DIR__ . '/../resources/js/service-worker.template.js';
+        
+        $templatePath = File::exists($customTemplate) ? $customTemplate : $packageTemplate;
+        $template = File::get($templatePath);
         
         $config = [
             'app_name' => $this->config['name'] ?? config('app.name'),
@@ -202,7 +216,15 @@ class AfPwaManager
             'page_timeout' => $this->config['page_timeout'] ?? 15000,
             'post_timeout' => $this->config['post_timeout'] ?? 30000,
             'asset_patterns' => $this->config['asset_patterns'] ?? ['/assets/', '/build/', '/vendor/'],
-            'api_patterns' => $this->config['api_patterns'] ?? ['/api/', '/livewire/']
+            'api_patterns' => $this->config['api_patterns'] ?? ['/api/', '/livewire/'],
+            'cacheable_extensions' => $this->config['cacheable_extensions'] ?? [
+                'js', 'css', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico', 'webp',
+                'woff', 'woff2', 'ttf', 'otf', 'eot', 'json', 'html', 'htm'
+            ],
+            'non_cacheable_extensions' => $this->config['non_cacheable_extensions'] ?? [
+                'avi', 'mkv', 'mov', 'wmv', 'flv', 'zip', 'rar', '7z', 'exe', 'msi'
+            ],
+            'error_handling' => $this->config['error_handling'] ?? []
         ];
 
         // Replace template placeholder with actual config
@@ -218,6 +240,28 @@ class AfPwaManager
     public function generateOfflinePage(): string
     {
         $appName = $this->config['name'] ?? config('app.name');
+        
+        try {
+            // Try to use custom offline template first
+            if (view()->exists('vendor.artflow-studio.pwa.offline.default')) {
+                return view('vendor.artflow-studio.pwa.offline.default', [
+                    'appName' => $appName,
+                    'message' => 'You are currently offline. Please check your internet connection and try again.'
+                ])->render();
+            }
+            
+            // Fallback to package template
+            if (view()->exists('af-pwa::offline.default')) {
+                return view('af-pwa::offline.default', [
+                    'appName' => $appName,
+                    'message' => 'You are currently offline. Please check your internet connection and try again.'
+                ])->render();
+            }
+        } catch (\Exception $e) {
+            // Continue to inline fallback
+        }
+        
+        // Inline fallback if no templates found
         $themeColor = $this->config['theme_color'] ?? '#000000';
         $backgroundColor = $this->config['background_color'] ?? '#ffffff';
 
@@ -408,13 +452,9 @@ HTML;
         $routes = $this->config['pwa_routes'] ?? ['/'];
         
         foreach ($routes as $route) {
-            $type = trim($route, '/');
-            if (empty($type)) {
-                $type = 'home';
-            }
-            
             try {
-                $pages[$route . '*'] = route('af-pwa.offline.type', $type);
+                // Use single default offline page for all routes
+                $pages[$route . '*'] = route('af-pwa.offline');
             } catch (\Exception $e) {
                 // Fallback to main offline page if route generation fails
                 $pages[$route . '*'] = route('af-pwa.offline');
@@ -656,5 +696,28 @@ HTML;
     public function useVendorAssets(): bool
     {
         return $this->config['use_vendor_assets'] ?? true;
+    }
+
+    /**
+     * Generate default screenshots for mobile app stores
+     */
+    protected function generateDefaultScreenshots(): array
+    {
+        return [
+            [
+                'src' => url('/vendor/artflow-studio/pwa/icons/icon-512x512.png'),
+                'sizes' => '512x512',
+                'type' => 'image/png',
+                'form_factor' => 'narrow',
+                'label' => $this->config['name'] ?? config('app.name')
+            ],
+            [
+                'src' => url('/vendor/artflow-studio/pwa/icons/icon-512x512.png'),
+                'sizes' => '512x512', 
+                'type' => 'image/png',
+                'form_factor' => 'wide',
+                'label' => $this->config['name'] ?? config('app.name')
+            ]
+        ];
     }
 }

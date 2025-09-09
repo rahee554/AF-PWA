@@ -41,7 +41,7 @@ class AfPwaServiceProvider extends ServiceProvider
 
         // Publish views
         $this->publishes([
-            __DIR__.'/../resources/views' => resource_path('views/vendor/af-pwa'),
+            __DIR__.'/../resources/views' => resource_path('views/vendor/artflow-studio/pwa'),
         ], 'af-pwa-views');
 
         // Load views

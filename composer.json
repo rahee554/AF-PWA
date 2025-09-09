@@ -1,6 +1,6 @@
 {
     "name": "artflow-studio/pwa",
-    "description": "A comprehensive Progressive Web Application package for Laravel with advanced session handling, CSRF protection, and dynamic routing",
+    "description": "A comprehensive Progressive Web Application package for Laravel with advanced session handling, CSRF protection, dynamic routing, and configurable asset caching",
     "type": "library",
     "license": "MIT",
     "version": "0.2.0",
@@ -12,7 +12,12 @@
         "session-management",
         "csrf",
         "livewire",
-        "offline"
+        "offline",
+        "caching",
+        "mobile",
+        "webapp",
+        "asset-optimization",
+        "performance"
     ],
     "authors": [
         {
@@ -24,20 +29,28 @@
     "homepage": "https://github.com/artflow-studio/af-pwa",
     "support": {
         "issues": "https://github.com/artflow-studio/af-pwa/issues",
-        "source": "https://github.com/artflow-studio/af-pwa"
+        "source": "https://github.com/artflow-studio/af-pwa",
+        "docs": "https://github.com/artflow-studio/af-pwa/blob/main/README.md"
     },
     "require": {
         "php": "^8.0",
         "illuminate/support": "^9.0|^10.0|^11.0|^12.0",
         "illuminate/http": "^9.0|^10.0|^11.0|^12.0",
         "illuminate/filesystem": "^9.0|^10.0|^11.0|^12.0",
-        "illuminate/view": "^9.0|^10.0|^11.0|^12.0"
+        "illuminate/view": "^9.0|^10.0|^11.0|^12.0",
+        "illuminate/console": "^9.0|^10.0|^11.0|^12.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5|^10.0",
         "orchestra/testbench": "^7.0|^8.0|^9.0",
         "laravel/pint": "^1.0",
-        "phpstan/phpstan": "^1.0"
+        "phpstan/phpstan": "^1.0",
+        "mockery/mockery": "^1.4"
+    },
+    "suggest": {
+        "livewire/livewire": "For enhanced AJAX/SPA functionality with PWA features",
+        "intervention/image": "For automatic icon generation and optimization",
+        "spatie/image-optimizer": "For optimizing PWA assets and icons"
     },
     "autoload": {
         "psr-4": {
@@ -57,10 +70,26 @@
             "aliases": {
                 "AfPwa": "ArtflowStudio\\AfPwa\\Facades\\AfPwa"
             }
+        },
+        "branch-alias": {
+            "dev-main": "0.2.x-dev"
         }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
+        "analyse": "vendor/bin/phpstan analyse",
+        "format": "vendor/bin/pint",
+        "check": [
+            "@format",
+            "@analyse",
+            "@test"
+        ]
     },
     "config": {
         "sort-packages": true,
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
         "allow-plugins": {
             "composer/package-versions-deprecated": true
         }

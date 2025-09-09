@@ -3,7 +3,7 @@
 {{-- PWA Meta Tags --}}
 <meta name="application-name" content="{{ $options['name'] ?? config('app.name') }}">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="{{ $options['short_name'] ?? $options['name'] ?? config('app.name') }}">
 <meta name="description" content="{{ $options['description'] ?? 'A powerful Progressive Web Application' }}">
 <meta name="format-detection" content="telephone=no">
@@ -12,7 +12,15 @@
 <meta name="msapplication-TileColor" content="{{ $options['theme_color'] ?? '#000000' }}">
 <meta name="msapplication-tap-highlight" content="no">
 <meta name="theme-color" content="{{ $options['theme_color'] ?? '#000000' }}">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+
+{{-- Additional Mobile PWA Meta Tags --}}
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="{{ $options['short_name'] ?? $options['name'] ?? config('app.name') }}">
+<meta name="apple-touch-fullscreen" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 {{-- Manifest --}}
 <link rel="manifest" href="{{ route('af-pwa.manifest') }}">
@@ -47,11 +55,12 @@
 <link rel="apple-touch-startup-image" href="/apple-splash-640-1136.jpg" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
 
 {{-- CSS Assets --}}
-<link rel="stylesheet" href="{{ asset('vendor/af-pwa/css/af-pwa.css') }}">
+<link rel="stylesheet" href="{{ asset('vendor/artflow-studio/pwa/css/af-pwa.css') }}">
 
 {{-- Preload critical PWA assets --}}
-<link rel="preload" href="{{ route('af-pwa.service-worker') }}" as="script">
-<link rel="preload" href="{{ asset('vendor/af-pwa/js/af-pwa.js') }}" as="script">
+<link rel="preload" href="{{ asset('vendor/artflow-studio/pwa/js/af-pwa.js') }}" as="script">
+<link rel="preload" href="{{ asset('vendor/artflow-studio/pwa/css/af-pwa.css') }}" as="style">
+<link rel="prefetch" href="{{ route('af-pwa.manifest') }}">
 
 {{-- DNS Prefetch for PWA routes --}}
 @if(isset($options['pwa_routes']) && is_array($options['pwa_routes']))

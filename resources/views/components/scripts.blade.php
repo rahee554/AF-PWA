@@ -1,39 +1,58 @@
 {{-- PWA Scripts Component --}}
 
 {{-- Load AF-PWA Core JavaScript --}}
-<script src="{{ asset('vendor/af-pwa/js/af-pwa.js') }}" defer></script>
+<script src="{{ asset('vendor/artflow-studio/pwa/js/af-pwa.js') }}"></script>
 
-{{-- Initialize PWA with Configuration --}}
+{{-- Complete PWA Script (Consolidated) --}}
 <script>
+    // Global PWA Configuration and Environment
+    window.AF_PWA_CONFIG = @json(app('af-pwa')->getFrontendConfig());
+    const isLocalEnv = @json(config('app.env') === 'local');
+    
+    // Console logging helper (environment-based)
+    function pwaLog(message, type = 'log') {
+        if (isLocalEnv) {
+            console[type]('[AF-PWA] ' + message);
+        }
+    }
+    
+    // PWA Initialization
     document.addEventListener('DOMContentLoaded', function() {
-        // PWA Configuration
-        window.AF_PWA_CONFIG = @json(app('af-pwa')->getFrontendConfig());
-        
-        // Initialize AF-PWA
-        if (typeof window.AfPwa !== 'undefined') {
-            window.afPwaInstance = new window.AfPwa(window.AF_PWA_CONFIG);
-            window.afPwaInstance.init();
-            
-            // Expose to global scope for debugging
-            if (window.AF_PWA_CONFIG.debug) {
-                window.afPwa = window.afPwaInstance;
-                console.log('[AF-PWA] Debug mode enabled. Instance available as window.afPwa');
+        // Function to initialize PWA
+        function initializePWA() {
+            if (typeof window.AfPwa !== 'undefined') {
+                window.afPwaInstance = new window.AfPwa(window.AF_PWA_CONFIG);
+                
+                // Expose to global scope for debugging in local environment
+                if (window.AF_PWA_CONFIG.debug && isLocalEnv) {
+                    window.afPwa = window.afPwaInstance;
+                    pwaLog('Debug mode enabled. Instance available as window.afPwa');
+                }
+                
+                pwaLog('PWA initialized and ready');
+                return true;
             }
-        } else {
-            console.error('[AF-PWA] Core JavaScript not loaded');
+            return false;
+        }
+        
+        // Try to initialize immediately
+        if (!initializePWA()) {
+            // If not loaded yet, wait for the script to load
+            setTimeout(() => {
+                if (!initializePWA()) {
+                    pwaLog('Core JavaScript failed to load', 'error');
+                }
+            }, 500);
         }
     });
-</script>
-
-{{-- Service Worker Registration --}}
-<script>
-    // Register service worker
+    
+    // Service Worker Registration
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
             navigator.serviceWorker.register('{{ route('af-pwa.service-worker') }}', {
                 scope: '{{ $options['scope'] ?? '/' }}'
             }).then(function(registration) {
-                console.log('[AF-PWA] Service Worker registered successfully:', registration.scope);
+                pwaLog('Service Worker registered successfully: ' + registration.scope);
                 
                 // Check for updates
                 registration.addEventListener('updatefound', function() {
@@ -58,12 +77,85 @@
                 });
                 
             }).catch(function(error) {
-                console.error('[AF-PWA] Service Worker registration failed:', error);
+                pwaLog('Service Worker registration failed: ' + error, 'error');
             });
         });
     } else {
-        console.warn('[AF-PWA] Service Worker not supported');
+        pwaLog('Service Worker not supported', 'warn');
     }
+    
+    // Install Prompt Handler
+    @if(isset($options['show_install_prompt']) && $options['show_install_prompt'])
+        // Custom install prompt enabled
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            if (window.afPwaInstance) {
+                window.afPwaInstance.showInstallPrompt(deferredPrompt);
+            }
+        });
+        
+        window.addEventListener('appinstalled', function(e) {
+            pwaLog('App installed successfully');
+            if (window.afPwaInstance) {
+                window.afPwaInstance.handleAppInstalled();
+            }
+        });
+    @else
+        // Native browser install prompt
+        pwaLog('Install prompt disabled - using native browser installation');
+        
+        window.addEventListener('beforeinstallprompt', function(e) {
+            // Don't prevent the default - let browser show native prompt
+            pwaLog('Native install prompt available');
+        });
+        
+        window.addEventListener('appinstalled', function(e) {
+            pwaLog('App installed successfully via native prompt');
+            if (window.afPwaInstance) {
+                window.afPwaInstance.handleAppInstalled();
+            }
+        });
+    @endif
+    
+    // Network Status Monitoring
+    @if(isset($options['show_network_status']) && $options['show_network_status'])
+        window.addEventListener('online', function() {
+            if (window.afPwaInstance) {
+                window.afPwaInstance.handleNetworkOnline();
+            }
+        });
+        
+        window.addEventListener('offline', function() {
+            if (window.afPwaInstance) {
+                window.afPwaInstance.handleNetworkOffline();
+            }
+        });
+    @endif
+    
+    // Custom PWA Events
+    document.addEventListener('af-pwa:ready', function(e) {
+        pwaLog('PWA initialized and ready');
+    });
+    
+    document.addEventListener('af-pwa:offline', function(e) {
+        pwaLog('App went offline');
+    });
+    
+    document.addEventListener('af-pwa:online', function(e) {
+        pwaLog('App came back online');
+    });
+    
+    document.addEventListener('af-pwa:update-available', function(e) {
+        pwaLog('App update available');
+    });
+    
+    document.addEventListener('af-pwa:installed', function(e) {
+        pwaLog('App installed');
+    });
 </script>
 
 {{-- Livewire Integration (if enabled) --}}
@@ -99,7 +191,9 @@
                 });
             });
             
-            console.log('[AF-PWA] Livewire integration enabled');
+            if (@json(config('app.env') === 'local')) {
+                console.log('[AF-PWA] Livewire integration enabled');
+            }
         } else {
             // Wait for Livewire to load
             const checkLivewire = setInterval(() => {
@@ -114,94 +208,3 @@
     });
 </script>
 @endif
-
-{{-- Install Prompt (if enabled) --}}
-@if(isset($options['show_install_prompt']) && $options['show_install_prompt'])
-<script>
-    // Handle install prompt
-    let deferredPrompt;
-    
-    window.addEventListener('beforeinstallprompt', function(e) {
-        // Prevent Chrome 67 and earlier from automatically showing the prompt
-        e.preventDefault();
-        
-        // Stash the event so it can be triggered later
-        deferredPrompt = e;
-        
-        if (window.afPwaInstance) {
-            window.afPwaInstance.showInstallPrompt(deferredPrompt);
-        }
-    });
-    
-    window.addEventListener('appinstalled', function(e) {
-        console.log('[AF-PWA] App installed successfully');
-        if (window.afPwaInstance) {
-            window.afPwaInstance.handleAppInstalled();
-        }
-    });
-</script>
-@else
-<script>
-    // Install prompt disabled - let browser handle native installation
-    console.log('[AF-PWA] Install prompt disabled - using native browser installation');
-    
-    window.addEventListener('beforeinstallprompt', function(e) {
-        // Don't prevent the default - let browser show native prompt
-        console.log('[AF-PWA] Native install prompt available');
-    });
-    
-    window.addEventListener('appinstalled', function(e) {
-        console.log('[AF-PWA] App installed successfully via native prompt');
-        if (window.afPwaInstance) {
-            window.afPwaInstance.handleAppInstalled();
-        }
-    });
-</script>
-@endif
-
-{{-- Network Status Monitoring (if enabled) --}}
-@if(isset($options['show_network_status']) && $options['show_network_status'])
-<script>
-    // Monitor network status
-    window.addEventListener('online', function() {
-        if (window.afPwaInstance) {
-            window.afPwaInstance.handleNetworkOnline();
-        }
-    });
-    
-    window.addEventListener('offline', function() {
-        if (window.afPwaInstance) {
-            window.afPwaInstance.handleNetworkOffline();
-        }
-    });
-</script>
-@endif
-
-{{-- Custom PWA Events --}}
-<script>
-    // Custom PWA event handlers
-    document.addEventListener('af-pwa:ready', function(e) {
-        console.log('[AF-PWA] PWA initialized and ready');
-        // Custom initialization code can go here
-    });
-    
-    document.addEventListener('af-pwa:offline', function(e) {
-        console.log('[AF-PWA] App went offline');
-        // Handle offline state
-    });
-    
-    document.addEventListener('af-pwa:online', function(e) {
-        console.log('[AF-PWA] App came back online');
-        // Handle online state
-    });
-    
-    document.addEventListener('af-pwa:update-available', function(e) {
-        console.log('[AF-PWA] App update available');
-        // Handle update notification
-    });
-    
-    document.addEventListener('af-pwa:installed', function(e) {
-        console.log('[AF-PWA] App installed');
-        // Handle app installation
-    });
-</script>

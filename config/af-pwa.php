@@ -238,32 +238,21 @@ return [
     |
     */
     'shortcuts' => [
-        [
-            'name' => 'Admin Dashboard',
-            'short_name' => 'Admin',
-            'description' => 'Access the admin dashboard',
-            'url' => '/admin',
-            'icons' => [
-                [
-                    'src' => '/favicon.svg',
-                    'sizes' => 'any',
-                    'type' => 'image/svg+xml'
-                ]
-            ]
-        ],
-        [
-            'name' => 'Member Area',
-            'short_name' => 'Member',
-            'description' => 'Access the member area',
-            'url' => '/member',
-            'icons' => [
-                [
-                    'src' => '/favicon.svg',
-                    'sizes' => 'any',
-                    'type' => 'image/svg+xml'
-                ]
-            ]
-        ],
+        // Add application-specific shortcuts here
+        // Example:
+        // [
+        //     'name' => 'Dashboard',
+        //     'short_name' => 'Dashboard',
+        //     'description' => 'Access your dashboard',
+        //     'url' => '/dashboard',
+        //     'icons' => [
+        //         [
+        //             'src' => '/favicon.svg',
+        //             'sizes' => 'any',
+        //             'type' => 'image/svg+xml'
+        //         ]
+        //     ]
+        // ],
     ],
 
     /*
@@ -339,6 +328,73 @@ return [
         '/js/',
         '/images/',
         '/fonts/',
+        '/media/',
+        '/storage/',
+        '/uploads/',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cacheable File Extensions
+    |--------------------------------------------------------------------------
+    |
+    | File extensions that should be cached by the service worker.
+    | These files will be stored locally for offline access.
+    |
+    */
+    'cacheable_extensions' => [
+        // Stylesheets
+        'css',
+        
+        // JavaScript
+        'js', 'mjs', 'ts',
+        
+        // Images
+        'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'ico', 'bmp', 'tiff',
+        
+        // Fonts
+        'woff', 'woff2', 'ttf', 'otf', 'eot',
+        
+        // Documents
+        'pdf', 'doc', 'docx', 'txt',
+        
+        // Audio/Video (smaller files only)
+        'mp3', 'wav', 'mp4', 'webm',
+        
+        // Data formats
+        'json', 'xml', 'csv',
+        
+        // Web manifest and service worker
+        'manifest', 'webmanifest',
+        
+        // Templates
+        'html', 'htm',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Non-Cacheable Extensions
+    |--------------------------------------------------------------------------
+    |
+    | File extensions that should NOT be cached (override cacheable_extensions).
+    | Useful for large files or frequently changing content.
+    |
+    */
+    'non_cacheable_extensions' => [
+        // Large video files
+        'avi', 'mkv', 'mov', 'wmv', 'flv',
+        
+        // Large audio files
+        'flac', 'aac', 'm4a',
+        
+        // Archives (can be large)
+        'zip', 'rar', '7z', 'tar', 'gz',
+        
+        // Executables
+        'exe', 'msi', 'dmg', 'deb', 'rpm',
+        
+        // Database files
+        'db', 'sqlite', 'sql',
     ],
 
     /*
@@ -369,6 +425,41 @@ return [
         '/',
         '/css/app.css',
         '/js/app.js',
+        '/manifest.json',
+        '/offline.html',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cache Size Limits
+    |--------------------------------------------------------------------------
+    |
+    | Configure maximum cache sizes to prevent excessive storage usage.
+    | Values in bytes (default: 50MB for assets, 10MB for pages).
+    |
+    */
+    'cache_limits' => [
+        'assets_max_size' => env('PWA_ASSETS_CACHE_MAX_SIZE', 52428800), // 50MB
+        'pages_max_size' => env('PWA_PAGES_CACHE_MAX_SIZE', 10485760),   // 10MB
+        'max_entries' => env('PWA_CACHE_MAX_ENTRIES', 100),              // Maximum cached items
+        'max_age_seconds' => env('PWA_CACHE_MAX_AGE', 86400 * 30),       // 30 days
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Performance Optimizations
+    |--------------------------------------------------------------------------
+    |
+    | Enable various performance optimizations for the PWA.
+    |
+    */
+    'performance' => [
+        'preload_critical_assets' => env('PWA_PRELOAD_CRITICAL', true),
+        'lazy_load_images' => env('PWA_LAZY_LOAD_IMAGES', true),
+        'compress_responses' => env('PWA_COMPRESS_RESPONSES', true),
+        'minify_html' => env('PWA_MINIFY_HTML', false),
+        'prefetch_links' => env('PWA_PREFETCH_LINKS', true),
+        'resource_hints' => env('PWA_RESOURCE_HINTS', true),
     ],
 
     /*
@@ -383,7 +474,23 @@ return [
     'enable_background_sync' => env('PWA_ENABLE_BACKGROUND_SYNC', false),
     'show_install_prompt' => env('PWA_SHOW_INSTALL_PROMPT', false),
     'show_network_status' => env('PWA_SHOW_NETWORK_STATUS', true),
-    'auto_refresh_on_update' => env('PWA_AUTO_REFRESH_ON_UPDATE', false),
+    'auto_refresh_on_update' => env('PWA_AUTO_REFRESH_ON_UPDATE', true),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Mobile PWA Features
+    |--------------------------------------------------------------------------
+    |
+    | Features specifically for mobile PWA installation and usage.
+    |
+    */
+    'mobile_features' => [
+        'fullscreen' => env('PWA_MOBILE_FULLSCREEN', true),
+        'orientation_lock' => env('PWA_ORIENTATION_LOCK', false),
+        'status_bar_style' => env('PWA_STATUS_BAR_STYLE', 'black-translucent'),
+        'splash_screen' => env('PWA_SPLASH_SCREEN', true),
+        'home_screen_icon' => env('PWA_HOME_SCREEN_ICON', true),
+    ],
 
     /*
     |--------------------------------------------------------------------------

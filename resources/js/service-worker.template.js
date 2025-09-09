@@ -31,9 +31,23 @@ function isStaticAsset(url) {
     const pathname = new URL(url).pathname;
     const extension = pathname.split('.').pop()?.toLowerCase();
     
-    const staticExtensions = ['js', 'css', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico', 'webp', 'woff', 'woff2', 'ttf'];
+    // Use configurable extensions from config
+    const cacheableExtensions = CONFIG.cacheable_extensions || [
+        'js', 'css', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico', 'webp', 
+        'woff', 'woff2', 'ttf', 'otf', 'eot', 'json', 'html', 'htm'
+    ];
     
-    return staticExtensions.includes(extension) || 
+    const nonCacheableExtensions = CONFIG.non_cacheable_extensions || [
+        'avi', 'mkv', 'mov', 'wmv', 'flv', 'zip', 'rar', '7z', 'exe', 'msi'
+    ];
+    
+    // Check if extension is explicitly non-cacheable
+    if (nonCacheableExtensions.includes(extension)) {
+        return false;
+    }
+    
+    // Check if extension is cacheable or matches asset patterns
+    return cacheableExtensions.includes(extension) || 
            CONFIG.asset_patterns?.some(pattern => pathname.includes(pattern));
 }
 
