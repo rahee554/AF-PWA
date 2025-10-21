@@ -19,7 +19,7 @@
         
         // Load AF-PWA Core JavaScript dynamically with fallback
         const script = document.createElement('script');
-        script.src = '{{ asset('vendor/artflow-studio/pwa/js/af-pwa.js') }}';
+        script.src = '{{ secure_asset('vendor/artflow-studio/pwa/js/af-pwa.js') }}';
         script.async = true;
         script.defer = true;
         

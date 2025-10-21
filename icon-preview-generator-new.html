@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AF-PWA Complete PWA Generator | artflow-studio/pwa</title>
+    <link rel="stylesheet" href="icon-generator-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <i class="fas fa-rocket"></i>
+                    <h1>AF-PWA Complete Generator</h1>
+                </div>
+                <div class="header-info">
+                    <span class="package-badge">artflow-studio/pwa</span>
+                    <div class="header-stats">
+                        <span class="stat-item">
+                            <i class="fas fa-images"></i>
+                            <span id="iconCount">0</span> Icons
+                        </span>
+                        <span class="stat-item">
+                            <i class="fas fa-cog"></i>
+                            <span id="settingsCount">0</span> Settings
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Panel - Controls -->
+            <div class="left-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-sliders-h"></i> PWA Configuration</h2>
+                </div>
+                
+                <!-- Tab Navigation -->
+                <div class="tab-navigation">
+                    <button class="tab-btn active" data-tab="upload">
+                        <i class="fas fa-upload"></i> Upload
+                    </button>
+                    <button class="tab-btn" data-tab="basic">
+                        <i class="fas fa-info-circle"></i> Basic
+                    </button>
+                    <button class="tab-btn" data-tab="advanced">
+                        <i class="fas fa-cogs"></i> Advanced
+                    </button>
+                    <button class="tab-btn" data-tab="icons">
+                        <i class="fas fa-images"></i> Icons
+                    </button>
+                    <button class="tab-btn" data-tab="offline">
+                        <i class="fas fa-wifi"></i> Offline
+                    </button>
+                    <button class="tab-btn" data-tab="shortcuts">
+                        <i class="fas fa-external-link-alt"></i> Shortcuts
+                    </button>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <!-- Upload Tab -->
+                    <div class="tab-pane active" id="uploadTab">
+                        <div class="upload-zone" id="uploadZone">
+                            <div class="upload-content">
+                                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                <h3>Upload Your Logo</h3>
+                                <p>Drag & drop or click to upload<br>
+                                   <small>PNG, JPG, SVG, WebP, ICO • Max 10MB</small></p>
+                                <button class="upload-btn" type="button">
+                                    <i class="fas fa-folder-open"></i> Choose File
+                                </button>
+                                <input type="file" id="fileInput" accept="image/*">
+                            </div>
+                            <div class="upload-preview hidden" id="uploadPreview">
+                                <img id="currentImage" alt="Uploaded logo">
+                                <div class="image-info">
+                                    <span id="imageSize"></span>
+                                    <button class="change-btn" onclick="document.getElementById('fileInput').click()">
+                                        <i class="fas fa-edit"></i> Change
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Basic Settings Tab -->
+                    <div class="tab-pane" id="basicTab">
+                        <div class="form-section">
+                            <h4><i class="fas fa-tag"></i> App Identity</h4>
+                            <div class="form-group">
+                                <label>App Name</label>
+                                <input type="text" id="appName" placeholder="My Progressive Web App" maxlength="45">
+                                <small>Full application name (max 45 chars)</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Short Name</label>
+                                <input type="text" id="shortName" placeholder="My PWA" maxlength="12">
+                                <small>Used on home screen (max 12 chars)</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea id="appDescription" placeholder="A powerful Progressive Web Application..." maxlength="132"></textarea>
+                                <small>Brief app description (max 132 chars)</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Categories</label>
+                                <select id="appCategory">
+                                    <option value="">Select category</option>
+                                    <option value="business">Business</option>
+                                    <option value="education">Education</option>
+                                    <option value="entertainment">Entertainment</option>
+                                    <option value="finance">Finance</option>
+                                    <option value="fitness">Fitness</option>
+                                    <option value="food">Food & Drink</option>
+                                    <option value="games">Games</option>
+                                    <option value="government">Government</option>
+                                    <option value="health">Health</option>
+                                    <option value="lifestyle">Lifestyle</option>
+                                    <option value="magazines">Magazines</option>
+                                    <option value="medical">Medical</option>
+                                    <option value="music">Music</option>
+                                    <option value="navigation">Navigation</option>
+                                    <option value="news">News</option>
+                                    <option value="personalization">Personalization</option>
+                                    <option value="photo">Photography</option>
+                                    <option value="productivity">Productivity</option>
+                                    <option value="security">Security</option>
+                                    <option value="shopping">Shopping</option>
+                                    <option value="social">Social</option>
+                                    <option value="sports">Sports</option>
+                                    <option value="travel">Travel</option>
+                                    <option value="utilities">Utilities</option>
+                                    <option value="weather">Weather</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h4><i class="fas fa-palette"></i> Visual Theme</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Theme Color</label>
+                                    <input type="color" id="themeColor" value="#007bff">
+                                </div>
+                                <div class="form-group">
+                                    <label>Background Color</label>
+                                    <input type="color" id="manifestBackgroundColor" value="#ffffff">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h4><i class="fas fa-mobile-alt"></i> Display & Navigation</h4>
+                            <div class="form-group">
+                                <label>Display Mode</label>
+                                <select id="displayMode">
+                                    <option value="standalone">Standalone (Recommended)</option>
+                                    <option value="fullscreen">Fullscreen</option>
+                                    <option value="minimal-ui">Minimal UI</option>
+                                    <option value="browser">Browser</option>
+                                </select>
+                                <small>How the app appears when launched</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Orientation</label>
+                                <select id="orientation">
+                                    <option value="any">Any</option>
+                                    <option value="portrait">Portrait</option>
+                                    <option value="landscape">Landscape</option>
+                                    <option value="portrait-primary">Portrait Primary</option>
+                                    <option value="landscape-primary">Landscape Primary</option>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Start URL</label>
+                                    <input type="url" id="startUrl" value="/" placeholder="/">
+                                </div>
+                                <div class="form-group">
+                                    <label>Scope</label>
+                                    <input type="text" id="scope" value="/" placeholder="/">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Settings Tab -->
+                    <div class="tab-pane" id="advancedTab">
+                        <div class="form-section">
+                            <h4><i class="fas fa-language"></i> Internationalization</h4>
+                            <div class="form-group">
+                                <label>Language</label>
+                                <select id="appLanguage">
+                                    <option value="en">English</option>
+                                    <option value="es">Spanish</option>
+                                    <option value="fr">French</option>
+                                    <option value="de">German</option>
+                                    <option value="it">Italian</option>
+                                    <option value="pt">Portuguese</option>
+                                    <option value="ru">Russian</option>
+                                    <option value="ja">Japanese</option>
+                                    <option value="ko">Korean</option>
+                                    <option value="zh">Chinese</option>
+                                    <option value="ar">Arabic</option>
+                                    <option value="hi">Hindi</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Text Direction</label>
+                                <select id="textDirection">
+                                    <option value="ltr">Left to Right</option>
+                                    <option value="rtl">Right to Left</option>
+                                    <option value="auto">Auto</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h4><i class="fas fa-share-alt"></i> Integration</h4>
+                            <div class="form-group">
+                                <label>Protocol Handlers</label>
+                                <div class="protocol-handlers">
+                                    <input type="text" id="protocolScheme" placeholder="web+myapp">
+                                    <input type="url" id="protocolUrl" placeholder="/handle?url=%s">
+                                    <button type="button" class="add-btn" onclick="addProtocolHandler()">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                                <div id="protocolList" class="item-list"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="shareTarget"> Share Target
+                                </label>
+                                <small>Allow app to receive shared content</small>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h4><i class="fas fa-store"></i> App Store</h4>
+                            <div class="form-group">
+                                <label>App Store URL</label>
+                                <input type="url" id="appStoreUrl" placeholder="https://apps.apple.com/app/...">
+                            </div>
+                            <div class="form-group">
+                                <label>Play Store URL</label>
+                                <input type="url" id="playStoreUrl" placeholder="https://play.google.com/store/apps/details?id=...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Icons Settings Tab -->
+                    <div class="tab-pane" id="iconsTab">
+                        <div class="form-section">
+                            <h4><i class="fas fa-paint-brush"></i> Icon Styling</h4>
+                            <div class="form-group">
+                                <label>Background Type</label>
+                                <select id="iconBackgroundType">
+                                    <option value="transparent">Transparent</option>
+                                    <option value="solid">Solid Color</option>
+                                    <option value="gradient">Gradient</option>
+                                    <option value="auto">Auto (Smart)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Icon Background Color</label>
+                                <input type="color" id="iconBackgroundColor" value="#ffffff">
+                            </div>
+                            <div class="form-group">
+                                <label>Padding <span id="paddingValue" class="value-display">10%</span></label>
+                                <input type="range" id="iconPadding" min="0" max="40" value="10" class="range-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Border Radius <span id="radiusValue" class="value-display">0%</span></label>
+                                <input type="range" id="iconRadius" min="0" max="50" value="0" class="range-input">
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="iconShadow"> Add Shadow Effect
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>Quality</label>
+                                <select id="iconQuality">
+                                    <option value="0.8">Good (80%)</option>
+                                    <option value="0.9">High (90%)</option>
+                                    <option value="1.0">Maximum (100%)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h4><i class="fas fa-layer-group"></i> Icon Types</h4>
+                            <div class="checkbox-grid">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" id="generateFavicons" checked>
+                                    <span>Favicons (16-48px)</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" id="generatePWA" checked>
+                                    <span>PWA Icons (72-512px)</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" id="generateApple" checked>
+                                    <span>Apple Touch Icons</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" id="generateMaskable" checked>
+                                    <span>Maskable Icons</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" id="generateWindows" checked>
+                                    <span>Windows Tiles</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" id="generateSplash">
+                                    <span>Splash Screens</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Offline Settings Tab -->
+                    <div class="tab-pane" id="offlineTab">
+                        <div class="form-section">
+                            <h4><i class="fas fa-wifi"></i> Offline Experience</h4>
+                            <div class="form-group">
+                                <label>Offline Page Template</label>
+                                <select id="offlineTemplate">
+                                    <option value="minimal">Minimal</option>
+                                    <option value="branded">Branded</option>
+                                    <option value="interactive">Interactive</option>
+                                    <option value="game">Offline Game</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Offline Message</label>
+                                <input type="text" id="offlineMessage" placeholder="You're currently offline" maxlength="50">
+                            </div>
+                            <div class="form-group">
+                                <label>Offline Description</label>
+                                <textarea id="offlineDescription" placeholder="Please check your internet connection and try again."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="offlineIndicator" checked> Show Connection Status
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="offlineRetry" checked> Show Retry Button
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h4><i class="fas fa-download"></i> Caching Strategy</h4>
+                            <div class="form-group">
+                                <label>Cache Strategy</label>
+                                <select id="cacheStrategy">
+                                    <option value="cacheFirst">Cache First</option>
+                                    <option value="networkFirst">Network First</option>
+                                    <option value="staleWhileRevalidate">Stale While Revalidate</option>
+                                    <option value="networkOnly">Network Only</option>
+                                    <option value="cacheOnly">Cache Only</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Cache Duration (days)</label>
+                                <input type="number" id="cacheDuration" value="7" min="1" max="365">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shortcuts Tab -->
+                    <div class="tab-pane" id="shortcutsTab">
+                        <div class="form-section">
+                            <h4><i class="fas fa-external-link-alt"></i> App Shortcuts</h4>
+                            <p class="section-description">Add up to 4 shortcuts that appear in the app menu</p>
+                            
+                            <div class="shortcuts-container">
+                                <div class="shortcut-item" data-index="0">
+                                    <div class="shortcut-header">
+                                        <h5>Shortcut 1</h5>
+                                        <button class="remove-shortcut" onclick="removeShortcut(0)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Name</label>
+                                            <input type="text" class="shortcut-name" placeholder="Quick Action">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Short Name</label>
+                                            <input type="text" class="shortcut-short-name" placeholder="Quick">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>URL</label>
+                                        <input type="url" class="shortcut-url" placeholder="/quick-action">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Description</label>
+                                        <input type="text" class="shortcut-description" placeholder="Perform a quick action">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button class="add-shortcut-btn" onclick="addShortcut()" id="addShortcutBtn">
+                                <i class="fas fa-plus"></i> Add Shortcut
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generate Button -->
+                <div class="generate-section">
+                    <button class="generate-btn" id="generateBtn" onclick="generatePWA()">
+                        <i class="fas fa-magic"></i>
+                        <span>Generate PWA Package</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Panel - Preview -->
+            <div class="right-panel">
+                <!-- Tab Navigation -->
+                <div class="preview-tabs">
+                    <button class="preview-tab active" data-preview="icons">
+                        <i class="fas fa-th"></i> Icons Grid
+                    </button>
+                    <button class="preview-tab" data-preview="devices">
+                        <i class="fas fa-mobile-alt"></i> Device Preview
+                    </button>
+                    <button class="preview-tab" data-preview="offline">
+                        <i class="fas fa-wifi"></i> Offline Preview
+                    </button>
+                    <button class="preview-tab" data-preview="loading">
+                        <i class="fas fa-spinner"></i> Loading States
+                    </button>
+                </div>
+
+                <!-- Preview Content -->
+                <div class="preview-content">
+                    <!-- Icons Grid Preview -->
+                    <div class="preview-pane active" id="iconsPreview">
+                        <div class="preview-header">
+                            <h3><i class="fas fa-th"></i> Generated Icons</h3>
+                            <div class="preview-stats">
+                                <span class="icon-count">0 icons generated</span>
+                            </div>
+                        </div>
+                        <div class="icons-grid" id="iconsGrid">
+                            <div class="empty-state">
+                                <i class="fas fa-image"></i>
+                                <h4>No Icons Generated Yet</h4>
+                                <p>Upload a logo to start generating PWA icons</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Device Preview -->
+                    <div class="preview-pane" id="devicesPreview">
+                        <div class="preview-header">
+                            <h3><i class="fas fa-mobile-alt"></i> Device Preview</h3>
+                            <div class="device-selector">
+                                <button class="device-btn active" data-device="mobile">📱 Mobile</button>
+                                <button class="device-btn" data-device="tablet">📄 Tablet</button>
+                                <button class="device-btn" data-device="desktop">🖥️ Desktop</button>
+                            </div>
+                        </div>
+                        <div class="devices-container">
+                            <!-- Mobile Device -->
+                            <div class="device-mockup mobile active" id="mobileDevice">
+                                <div class="device-frame">
+                                    <div class="device-screen">
+                                        <div class="status-bar">
+                                            <span class="time">9:41</span>
+                                            <div class="status-icons">
+                                                <i class="fas fa-signal"></i>
+                                                <i class="fas fa-wifi"></i>
+                                                <i class="fas fa-battery-full"></i>
+                                            </div>
+                                        </div>
+                                        <div class="home-screen">
+                                            <div class="app-grid">
+                                                <div class="app-icon" id="mobileAppIcon">
+                                                    <div class="icon-placeholder">
+                                                        <i class="fas fa-image"></i>
+                                                    </div>
+                                                    <span class="app-name" id="mobileAppName">My PWA</span>
+                                                </div>
+                                                <div class="app-icon demo">
+                                                    <div class="demo-icon" style="background: #007bff;">
+                                                        <i class="fas fa-envelope"></i>
+                                                    </div>
+                                                    <span class="app-name">Mail</span>
+                                                </div>
+                                                <div class="app-icon demo">
+                                                    <div class="demo-icon" style="background: #28a745;">
+                                                        <i class="fas fa-phone"></i>
+                                                    </div>
+                                                    <span class="app-name">Phone</span>
+                                                </div>
+                                                <div class="app-icon demo">
+                                                    <div class="demo-icon" style="background: #ffc107;">
+                                                        <i class="fas fa-camera"></i>
+                                                    </div>
+                                                    <span class="app-name">Camera</span>
+                                                </div>
+                                            </div>
+                                            <div class="dock">
+                                                <div class="dock-icon">
+                                                    <div class="demo-icon" style="background: #17a2b8;">
+                                                        <i class="fas fa-compass"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="dock-icon">
+                                                    <div class="demo-icon" style="background: #dc3545;">
+                                                        <i class="fas fa-music"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="dock-icon">
+                                                    <div class="demo-icon" style="background: #6f42c1;">
+                                                        <i class="fas fa-gamepad"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tablet Device -->
+                            <div class="device-mockup tablet" id="tabletDevice">
+                                <div class="device-frame">
+                                    <div class="device-screen">
+                                        <div class="status-bar">
+                                            <span class="time">9:41 AM</span>
+                                            <div class="status-icons">
+                                                <span>100%</span>
+                                                <i class="fas fa-battery-full"></i>
+                                            </div>
+                                        </div>
+                                        <div class="app-interface">
+                                            <div class="app-header">
+                                                <div class="app-title-bar">
+                                                    <div class="app-icon-small" id="tabletAppIcon">
+                                                        <i class="fas fa-image"></i>
+                                                    </div>
+                                                    <span class="app-title" id="tabletAppName">My PWA App</span>
+                                                </div>
+                                                <div class="app-controls">
+                                                    <i class="fas fa-search"></i>
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </div>
+                                            </div>
+                                            <div class="app-content">
+                                                <div class="content-placeholder">
+                                                    <h4>Welcome to your PWA!</h4>
+                                                    <p>Your Progressive Web App is running perfectly on tablet devices.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Desktop Device -->
+                            <div class="device-mockup desktop" id="desktopDevice">
+                                <div class="browser-window">
+                                    <div class="browser-header">
+                                        <div class="browser-controls">
+                                            <span class="control close"></span>
+                                            <span class="control minimize"></span>
+                                            <span class="control maximize"></span>
+                                        </div>
+                                        <div class="address-bar">
+                                            <div class="url-section">
+                                                <i class="fas fa-lock"></i>
+                                                <span>localhost:8000</span>
+                                            </div>
+                                            <div class="browser-actions">
+                                                <div class="install-prompt">
+                                                    <i class="fas fa-plus"></i>
+                                                    <span>Install App</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="browser-content">
+                                        <div class="web-app">
+                                            <div class="app-navbar">
+                                                <div class="navbar-brand">
+                                                    <div class="navbar-icon" id="desktopAppIcon">
+                                                        <i class="fas fa-image"></i>
+                                                    </div>
+                                                    <span id="desktopAppName">My PWA App</span>
+                                                </div>
+                                                <div class="navbar-menu">
+                                                    <span>Home</span>
+                                                    <span>Features</span>
+                                                    <span>About</span>
+                                                </div>
+                                            </div>
+                                            <div class="web-content">
+                                                <div class="hero-section">
+                                                    <h2>Progressive Web App</h2>
+                                                    <p>Fast, reliable, and engaging experience</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Offline Preview -->
+                    <div class="preview-pane" id="offlinePreview">
+                        <div class="preview-header">
+                            <h3><i class="fas fa-wifi"></i> Offline Experience</h3>
+                            <div class="offline-controls">
+                                <button class="template-btn active" data-template="minimal">Minimal</button>
+                                <button class="template-btn" data-template="branded">Branded</button>
+                                <button class="template-btn" data-template="interactive">Interactive</button>
+                            </div>
+                        </div>
+                        <div class="offline-container">
+                            <div class="offline-page-preview" id="offlinePagePreview">
+                                <!-- Offline page will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loading States Preview -->
+                    <div class="preview-pane" id="loadingPreview">
+                        <div class="preview-header">
+                            <h3><i class="fas fa-spinner"></i> Loading States</h3>
+                            <div class="loading-controls">
+                                <button class="loading-btn active" data-loading="splash">Splash Screen</button>
+                                <button class="loading-btn" data-loading="skeleton">Skeleton Loading</button>
+                                <button class="loading-btn" data-loading="progress">Progress Loading</button>
+                            </div>
+                        </div>
+                        <div class="loading-container">
+                            <!-- Splash Screen -->
+                            <div class="loading-demo active" id="splashDemo">
+                                <div class="splash-screen-preview">
+                                    <div class="splash-content">
+                                        <div class="splash-icon" id="splashAppIcon">
+                                            <i class="fas fa-image"></i>
+                                        </div>
+                                        <h2 class="splash-title" id="splashAppName">My PWA App</h2>
+                                        <div class="splash-loading">
+                                            <div class="loading-dots">
+                                                <span></span>
+                                                <span></span>
+                                                <span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Skeleton Loading -->
+                            <div class="loading-demo" id="skeletonDemo">
+                                <div class="skeleton-preview">
+                                    <div class="skeleton-header">
+                                        <div class="skeleton-avatar"></div>
+                                        <div class="skeleton-text">
+                                            <div class="skeleton-line short"></div>
+                                            <div class="skeleton-line medium"></div>
+                                        </div>
+                                    </div>
+                                    <div class="skeleton-content">
+                                        <div class="skeleton-line long"></div>
+                                        <div class="skeleton-line medium"></div>
+                                        <div class="skeleton-line long"></div>
+                                        <div class="skeleton-line short"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Progress Loading -->
+                            <div class="loading-demo" id="progressDemo">
+                                <div class="progress-preview">
+                                    <div class="progress-content">
+                                        <div class="progress-icon" id="progressAppIcon">
+                                            <i class="fas fa-image"></i>
+                                        </div>
+                                        <h3>Loading your app...</h3>
+                                        <div class="progress-bar-demo">
+                                            <div class="progress-fill-demo"></div>
+                                        </div>
+                                        <div class="progress-text">Setting up your experience...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Panel - Download -->
+        <div class="bottom-panel hidden" id="bottomPanel">
+            <div class="download-content">
+                <div class="download-header">
+                    <h3><i class="fas fa-download"></i> Download PWA Package</h3>
+                    <button class="collapse-btn" onclick="toggleBottomPanel()">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="download-options">
+                    <div class="download-option">
+                        <div class="option-info">
+                            <i class="fas fa-archive"></i>
+                            <div>
+                                <h4>Complete Package</h4>
+                                <p>All icons, manifest, configs, and templates</p>
+                            </div>
+                        </div>
+                        <button class="download-btn primary" onclick="downloadComplete()">
+                            <i class="fas fa-download"></i> Download ZIP
+                        </button>
+                    </div>
+                    <div class="download-option">
+                        <div class="option-info">
+                            <i class="fas fa-file-code"></i>
+                            <div>
+                                <h4>Laravel Config</h4>
+                                <p>AF-PWA configuration for Laravel</p>
+                            </div>
+                        </div>
+                        <button class="download-btn" onclick="downloadLaravelConfig()">
+                            <i class="fas fa-copy"></i> Copy Config
+                        </button>
+                    </div>
+                    <div class="download-option">
+                        <div class="option-info">
+                            <i class="fas fa-file-alt"></i>
+                            <div>
+                                <h4>Manifest Only</h4>
+                                <p>PWA manifest.json file</p>
+                            </div>
+                        </div>
+                        <button class="download-btn" onclick="downloadManifest()">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                    <div class="download-option">
+                        <div class="option-info">
+                            <i class="fas fa-images"></i>
+                            <div>
+                                <h4>Icons Only</h4>
+                                <p>All generated icon files</p>
+                            </div>
+                        </div>
+                        <button class="download-btn" onclick="downloadIcons()">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay hidden" id="loadingOverlay">
+            <div class="loading-content">
+                <div class="loading-spinner">
+                    <i class="fas fa-cog fa-spin"></i>
+                </div>
+                <h3 id="loadingTitle">Generating PWA Package...</h3>
+                <p id="loadingMessage">This may take a few moments</p>
+                <div class="loading-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="loadingProgress"></div>
+                    </div>
+                    <span class="progress-text" id="loadingPercentage">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification System -->
+        <div class="notifications-container" id="notificationsContainer"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="icon-generator-script.js"></script>
+</body>
+</html>

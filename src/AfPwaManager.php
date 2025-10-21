@@ -157,7 +157,7 @@ class AfPwaManager
             'categories' => $this->config['categories'] ?? ['business', 'productivity'],
             'prefer_related_applications' => false,
             // Mobile-specific features for better PWA support
-            'id' => $this->config['id'] ?? url('/'),
+            'id' => $this->config['id'] ?? '/',
             'display_override' => ['window-controls-overlay', 'standalone'],
             'edge_side_panel' => [
                 'preferred_width' => 400

@@ -55,11 +55,11 @@
 <link rel="apple-touch-startup-image" href="/apple-splash-640-1136.jpg" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
 
 {{-- CSS Assets --}}
-<link rel="stylesheet" href="{{ asset('vendor/artflow-studio/pwa/css/af-pwa.css') }}">
+<link rel="stylesheet" href="{{ secure_asset('vendor/artflow-studio/pwa/css/af-pwa.css') }}">
 
 {{-- Preload critical PWA assets --}}
-<link rel="preload" href="{{ asset('vendor/artflow-studio/pwa/js/af-pwa.js') }}" as="script">
-<link rel="preload" href="{{ asset('vendor/artflow-studio/pwa/css/af-pwa.css') }}" as="style">
+<link rel="preload" href="{{ secure_asset('vendor/artflow-studio/pwa/js/af-pwa.js') }}" as="script">
+<link rel="preload" href="{{ secure_asset('vendor/artflow-studio/pwa/css/af-pwa.css') }}" as="style">
 <link rel="prefetch" href="{{ route('af-pwa.manifest') }}">
 
 {{-- DNS Prefetch for PWA routes --}}

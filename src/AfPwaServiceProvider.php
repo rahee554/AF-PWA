@@ -58,6 +58,7 @@ class AfPwaServiceProvider extends ServiceProvider
             $this->commands([
                 Console\InstallCommand::class,
                 Console\GenerateCommand::class,
+                Console\GenerateIconsCommand::class,
                 Console\TestCommand::class,
                 Console\HealthCheckCommand::class,
                 Console\RefreshCommand::class,
@@ -92,7 +93,7 @@ class AfPwaServiceProvider extends ServiceProvider
         });
 
         Blade::directive('AFpwaStyles', function ($expression) {
-            return "<?php echo '<link rel=\"stylesheet\" href=\"' . asset('vendor/artflow-studio/pwa/css/af-pwa.css') . '\">'; ?>";
+            return "<?php echo '<link rel=\"stylesheet\" href=\"' . secure_asset('vendor/artflow-studio/pwa/css/af-pwa.css') . '\">'; ?>";
         });
     }
 
