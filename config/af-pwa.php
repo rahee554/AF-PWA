@@ -185,22 +185,15 @@ return [
     | Define the icons for your PWA. These will be used on home screens,
     | app launchers, and in various contexts across different platforms.
     |
+    | Note: If icons are missing, the package will generate default fallback icons
+    |
     */
     'icons' => [
         [
             'src' => '/favicon.ico',
             'sizes' => '16x16 32x32',
-            'type' => 'image/x-icon'
-        ],
-        [
-            'src' => '/favicon.svg',
-            'sizes' => 'any',
-            'type' => 'image/svg+xml'
-        ],
-        [
-            'src' => '/apple-touch-icon.png',
-            'sizes' => '180x180',
-            'type' => 'image/png'
+            'type' => 'image/x-icon',
+            'fallback' => '/vendor/artflow-studio/pwa/icons/icon-192x192.png' // Fallback if favicon.ico doesn't exist
         ],
         [
             'src' => '/vendor/artflow-studio/pwa/icons/icon-192x192.png',
@@ -346,23 +339,26 @@ return [
         // Stylesheets
         'css',
         
-        // JavaScript
-        'js', 'mjs', 'ts',
+        // JavaScript & TypeScript
+        'js', 'mjs', 'jsx', 'ts', 'tsx',
         
-        // Images
-        'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'ico', 'bmp', 'tiff',
+        // Images (All modern formats)
+        'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'avif', 'ico', 'bmp', 'tiff',
         
-        // Fonts
+        // Fonts (All formats)
         'woff', 'woff2', 'ttf', 'otf', 'eot',
         
         // Documents
-        'pdf', 'doc', 'docx', 'txt',
+        'pdf', 'doc', 'docx', 'txt', 'csv',
         
         // Audio/Video (smaller files only)
-        'mp3', 'wav', 'mp4', 'webm',
+        'mp3', 'wav', 'ogg', 'flac', 'mp4', 'webm',
         
         // Data formats
-        'json', 'xml', 'csv',
+        'json', 'xml',
+        
+        // Archives (smaller files)
+        'zip', 'gz', 'tar', 'rar', '7z',
         
         // Web manifest and service worker
         'manifest', 'webmanifest',

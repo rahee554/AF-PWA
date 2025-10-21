@@ -23,7 +23,7 @@ self.addEventListener('install', (event) => {
     
     event.waitUntil(
         caches.open(CACHE_NAME)
-            .then((cache) => {
+            .then(async (cache) => {
                 if (DEBUG) console.log('AF-PWA SW: Caching static assets');
                 
                 // Cache essential assets
@@ -38,7 +38,26 @@ self.addEventListener('install', (event) => {
                     essentialAssets.push(...STATIC_ASSETS.slice(0, 20)); // Limit initial cache
                 }
                 
-                return cache.addAll(essentialAssets.filter(Boolean));
+                // Filter out undefined/null values
+                const validAssets = essentialAssets.filter(Boolean);
+                
+                // Cache assets individually to handle 404s gracefully
+                const cachePromises = validAssets.map(async (asset) => {
+                    try {
+                        const response = await fetch(asset);
+                        if (response.ok) {
+                            await cache.put(asset, response);
+                            if (DEBUG) console.log('AF-PWA SW: Cached:', asset);
+                        } else {
+                            if (DEBUG) console.warn('AF-PWA SW: Failed to cache (status ' + response.status + '):', asset);
+                        }
+                    } catch (error) {
+                        if (DEBUG) console.warn('AF-PWA SW: Failed to fetch for cache:', asset, error.message);
+                    }
+                });
+                
+                await Promise.allSettled(cachePromises);
+                if (DEBUG) console.log('AF-PWA SW: Cache installation completed');
             })
             .catch((error) => {
                 if (DEBUG) console.error('AF-PWA SW: Cache installation failed:', error);
@@ -186,7 +205,8 @@ function isRouteAllowed(path) {
 
 function isStaticAsset(request) {
     const url = new URL(request.url);
-    return /\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/i.test(url.pathname);
+    // Comprehensive list of cacheable file extensions
+    return /\.(css|js|mjs|jsx|ts|tsx|png|jpg|jpeg|gif|svg|ico|webp|avif|bmp|tiff|woff|woff2|ttf|eot|otf|json|xml|pdf|txt|csv|webm|mp4|ogg|mp3|wav|flac|zip|gz|tar|rar|7z|html|htm)$/i.test(url.pathname);
 }
 
 function isAPIRequest(request) {
